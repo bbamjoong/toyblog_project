@@ -1,43 +1,62 @@
 package klog.blog_project.service;
 
+import static klog.blog_project.entity.SignupMessage.EXIST_ID;
+import static klog.blog_project.entity.SignupMessage.EXIST_NICKNAME;
+
 import klog.blog_project.entity.User;
+import klog.blog_project.entity.dto.UserDto;
+import klog.blog_project.exception.UserDuplicateException;
 import klog.blog_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
 
     /**
      * 회원가입
      */
-    @Transactional
-    public Long join(User user) {
-        validateUser(user);
-        userRepository.save(user);
-        return user.getUserId();
+    public Long signup(UserDto.SignupRequest dto) {
+        validateUser(dto);
+        return saveUser(dto);
     }
 
-    private void validateUser(User user) {
-        validateDuplicateUserId(user);
-        validateDuplicateNickname(user);
+    @Transactional(readOnly = true)
+    public void validateUser(UserDto.SignupRequest dto) {
+        validateDuplicateUserId(dto);
+        validateDuplicateNickname(dto);
     }
 
-    private void validateDuplicateUserId(User user) {
-        User existingUserByUserId = userRepository.findByUserId(user.getUserId());
-        if (existingUserByUserId != null) {
-            throw new IllegalStateException("이미 존재하는 아이디 입니다.");
+    @Transactional(readOnly = true)
+    public void validateDuplicateUserId(UserDto.SignupRequest dto) {
+        User existingUserById = userRepository.findById(dto.getId());
+        if (existingUserById != null) {
+            throw new UserDuplicateException(EXIST_ID.getMessage());
         }
     }
 
-    private void validateDuplicateNickname(User user) {
-        User existingUserByNickname = userRepository.findByNickname(user.getNickname());
+    @Transactional(readOnly = true)
+    public void validateDuplicateNickname(UserDto.SignupRequest dto) {
+        User existingUserByNickname = userRepository.findByNickname(dto.getNickname());
         if (existingUserByNickname != null) {
-            throw new IllegalStateException("이미 존재하는 닉네임 입니다.");
+            throw new UserDuplicateException(EXIST_NICKNAME.getMessage());
         }
+    }
+
+    private Long saveUser(UserDto.SignupRequest dto) {
+        User user = User.builder()
+                .id(dto.getId())
+                .password(dto.getPassword())
+                .nickname(dto.getNickname())
+                .build();
+
+        userRepository.save(user);
+
+        return user.getUserId();
     }
 }
