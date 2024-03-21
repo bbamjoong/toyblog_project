@@ -1,7 +1,7 @@
 package klog.blog_project.service;
 
-import static klog.blog_project.entity.Message.EXIST_ID;
-import static klog.blog_project.entity.Message.EXIST_NICKNAME;
+import static klog.blog_project.entity.SignupMessage.EXIST_ID;
+import static klog.blog_project.entity.SignupMessage.EXIST_NICKNAME;
 
 import klog.blog_project.entity.User;
 import klog.blog_project.entity.dto.UserDto;
@@ -47,7 +47,7 @@ public class UserService {
             throw new UserDuplicateException(EXIST_NICKNAME.getMessage());
         }
     }
-    
+
     private Long saveUser(UserDto.SignupRequest dto) {
         User user = User.builder()
                 .id(dto.getId())

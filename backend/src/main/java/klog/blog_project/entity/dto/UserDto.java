@@ -1,6 +1,6 @@
 package klog.blog_project.entity.dto;
 
-import static klog.blog_project.entity.Message.SUCCESS_SIGNUP;
+import static klog.blog_project.entity.SignupMessage.SUCCESS_SIGNUP;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
