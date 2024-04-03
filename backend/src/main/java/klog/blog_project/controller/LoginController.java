@@ -4,7 +4,7 @@ import static klog.blog_project.entity.UserMessage.INTERNAL_SERVER_ERROR;
 
 import jakarta.validation.Valid;
 import klog.blog_project.entity.dto.UserDto;
-import klog.blog_project.exception.UserDuplicateException;
+import klog.blog_project.exception.UserNotFoundException;
 import klog.blog_project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,33 +18,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class SignupController {
+public class LoginController {
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<UserDto.SignupResponse> signup(@Valid @RequestBody UserDto.SignupRequest dto) {
-        userService.signup(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserDto.SignupResponse.success(dto));
-    }
-
-    @ExceptionHandler(UserDuplicateException.class)
-    @ResponseBody
-    public ResponseEntity<UserDto.SignupResponse> handleUserDuplicateException(UserDuplicateException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(UserDto.SignupResponse.failure(ex.getMessage()));
+    @PostMapping("/login")
+    public ResponseEntity<UserDto.LoginResponse> login(@Valid @RequestBody UserDto.LoginRequest dto) {
+        userService.login(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(UserDto.LoginResponse.success(dto));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<UserDto.SignupResponse> handleNonCorrectInputException(
+    public ResponseEntity<UserDto.LoginResponse> handleNonCorrectInputException(
             MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldError().getDefaultMessage();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserDto.SignupResponse.failure(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(UserDto.LoginResponse.failure(message));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<UserDto.LoginResponse> handleUserNotExistException(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(UserDto.LoginResponse.failure(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ResponseEntity<UserDto.SignupResponse> handleException() {
+    public ResponseEntity<UserDto.LoginResponse> handleException() {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(UserDto.SignupResponse.failure(INTERNAL_SERVER_ERROR.getMessage()));
+                .body(UserDto.LoginResponse.failure(INTERNAL_SERVER_ERROR.getMessage()));
     }
 }
