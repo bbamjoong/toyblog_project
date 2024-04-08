@@ -3,6 +3,7 @@ package klog.blog_project.entity.dto;
 import static klog.blog_project.entity.UserMessage.SUCCESS_LOGIN;
 import static klog.blog_project.entity.UserMessage.SUCCESS_SIGNUP;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -31,6 +32,7 @@ public class UserDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SignupResponse {
         private String id;
         private String nickname;
@@ -68,6 +70,7 @@ public class UserDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class LoginResponse {
         private String id;
         private String password;

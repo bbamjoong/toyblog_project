@@ -1,9 +1,14 @@
 package klog.blog_project.entity.dto;
 
+import static klog.blog_project.entity.PostMessage.SUCCESS_DETAIL_POST_VIEW;
 import static klog.blog_project.entity.UserMessage.SUCCESS_WRITE;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import klog.blog_project.entity.Post;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,11 +39,14 @@ public class PostDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class WriteResponse {
+        private Long userId;
         private String message;
 
-        public static PostDto.WriteResponse success() {
+        public static PostDto.WriteResponse success(Long userId) {
             return PostDto.WriteResponse.builder()
+                    .userId(userId)
                     .message(SUCCESS_WRITE.getMessage())
                     .build();
         }
@@ -46,6 +54,39 @@ public class PostDto {
         // 실패한 경우를 위한 빌더 메서드
         public static PostDto.WriteResponse failure(String errorMessage) {
             return PostDto.WriteResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(Include.NON_NULL)
+    public static class DetailPostResponse {
+        private String nickname;
+        private String title;
+        private String content;
+        private long likeCount;
+        private long viewCount;
+        private LocalDateTime createdDate;
+        private String message;
+
+        public static PostDto.DetailPostResponse success(Post post) {
+            return DetailPostResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .title(post.getTitle())
+                    .content(post.getTitle())
+                    .likeCount(post.getLikeCount())
+                    .viewCount(post.getViewCount())
+                    .createdDate(post.getCreatedDate())
+                    .message(SUCCESS_DETAIL_POST_VIEW.getMessage())
+                    .build();
+        }
+
+        public static PostDto.DetailPostResponse failure(String errorMessage) {
+            return DetailPostResponse.builder()
                     .message(errorMessage)
                     .build();
         }
