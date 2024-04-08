@@ -2,6 +2,7 @@ package klog.blog_project.entity.dto;
 
 import static klog.blog_project.entity.UserMessage.SUCCESS_WRITE;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -34,11 +35,14 @@ public class PostDto {
     @Getter
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class WriteResponse {
+        private Long userId;
         private String message;
 
-        public static PostDto.WriteResponse success() {
+        public static PostDto.WriteResponse success(Long userId) {
             return PostDto.WriteResponse.builder()
+                    .userId(userId)
                     .message(SUCCESS_WRITE.getMessage())
                     .build();
         }
