@@ -2,6 +2,8 @@ package klog.blog_project.controller;
 
 import static klog.blog_project.entity.UserMessage.INTERNAL_SERVER_ERROR;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import klog.blog_project.entity.dto.UserDto;
 import klog.blog_project.exception.UserNotFoundException;
@@ -22,8 +24,12 @@ public class LoginController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto.LoginResponse> login(@Valid @RequestBody UserDto.LoginRequest dto) {
-        userService.login(dto);
+    public ResponseEntity<UserDto.LoginResponse> login(@Valid @RequestBody UserDto.LoginRequest dto,
+                                                       HttpServletRequest request) {
+        Long userId = userService.login(dto);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("userId", userId);
         return ResponseEntity.status(HttpStatus.OK).body(UserDto.LoginResponse.success(dto));
     }
 
