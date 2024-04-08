@@ -12,7 +12,10 @@ public enum UserMessage {
     INTERNAL_SERVER_ERROR("서버 에러입니다."),
 
     NOT_EXIST_USER("존재하지 않는 사용자 입니다."),
-    SUCCESS_LOGIN("로그인이 성공적으로 완료되었습니다.");
+    SUCCESS_LOGIN("로그인이 성공적으로 완료되었습니다."),
+
+    SUCCESS_WRITE("글 작성이 성공적으로 완료되었습니다."),
+    UNAUTHORIZED("권한이 없는 사용자 입니다.");
 
     private final String message;
 }
