@@ -3,7 +3,7 @@ package klog.blog_project.entity.dto;
 import static klog.blog_project.entity.PostMessage.SUCCESS_DELETE;
 import static klog.blog_project.entity.PostMessage.SUCCESS_DETAIL_POST_VIEW;
 import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
-
+import static klog.blog_project.entity.PostMessage.SUCCESS_POSTS_VIEW;
 import static klog.blog_project.entity.UserMessage.SUCCESS_WRITE;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 import klog.blog_project.entity.Post;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -157,4 +158,26 @@ public class PostDto {
         }
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class PostsResponse {
+        private List<SinglePostDto> posts;
+        private String message;
+
+        public static PostDto.PostsResponse success(List<SinglePostDto> posts) {
+            return PostsResponse.builder()
+                    .message(SUCCESS_POSTS_VIEW.getMessage())
+                    .posts(posts)
+                    .build();
+        }
+
+        public static PostDto.PostsResponse failure(String errorMessage) {
+            return PostDto.PostsResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
 }
