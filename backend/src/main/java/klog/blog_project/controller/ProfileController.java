@@ -1,14 +1,18 @@
 package klog.blog_project.controller;
 
+import static klog.blog_project.entity.UserMessage.INTERNAL_SERVER_ERROR;
 import static klog.blog_project.entity.UserMessage.UNAUTHORIZED;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
 import klog.blog_project.entity.dto.ProfileDto;
 import klog.blog_project.entity.dto.ProfileDto.ModifyProfileResponse;
 import klog.blog_project.entity.dto.ProfileDto.ProfileResponse;
+import klog.blog_project.entity.dto.ProfileDto.SimpleProfilesResponse;
 import klog.blog_project.entity.dto.SingleProfileDto;
+import klog.blog_project.entity.dto.SingleSimpleProfileDto;
 import klog.blog_project.exception.ForbiddenUserException;
 import klog.blog_project.exception.UserNotFoundException;
 import klog.blog_project.service.UserService;
@@ -41,16 +45,11 @@ public class ProfileController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ProfileDto.ProfileResponse.failure(ex.getMessage()));
     }
 
-    //    @ExceptionHandler(Exception.class)
-//    @ResponseBody
-//    public ResponseEntity<String> handleException() {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(INTERNAL_SERVER_ERROR.getMessage());
-//    }
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public void handleException(Exception ex) {
-        ex.printStackTrace();
+    public ResponseEntity<String> handleException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(INTERNAL_SERVER_ERROR.getMessage());
     }
 
     @PatchMapping("/{nickname}/updateProfile")
@@ -81,5 +80,11 @@ public class ProfileController {
     public ResponseEntity<ProfileDto.ModifyProfileResponse> handleForbiddenUserException(ForbiddenUserException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ProfileDto.ModifyProfileResponse.failure(ex.getMessage()));
+    }
+
+    @GetMapping("/usersInfo")
+    public ResponseEntity<SimpleProfilesResponse> viewAllSimpleProfiles() {
+        List<SingleSimpleProfileDto> profiles = userService.findAllSimpleProfiles();
+        return ResponseEntity.status(HttpStatus.OK).body(SimpleProfilesResponse.success(profiles));
     }
 }

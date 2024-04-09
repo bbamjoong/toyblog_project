@@ -1,8 +1,10 @@
 package klog.blog_project.repository;
 
+import java.util.List;
 import java.util.Optional;
 import klog.blog_project.entity.User;
 import klog.blog_project.entity.dto.SingleProfileDto;
+import klog.blog_project.entity.dto.SingleSimpleProfileDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "from User u "
             + "where u.nickname = :nickname")
     Optional<SingleProfileDto> findUserDtoByNickname(@Param("nickname") String nickname);
+
+    @Query(value = "select new klog.blog_project.entity.dto.SingleSimpleProfileDto(u) "
+            + "from User u")
+    List<SingleSimpleProfileDto> findAllSimpleProfiles();
 }

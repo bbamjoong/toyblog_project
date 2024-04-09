@@ -1,11 +1,13 @@
 package klog.blog_project.entity.dto;
 
 import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
+import static klog.blog_project.entity.PostMessage.SUCCESS_POSTS_VIEW;
 import static klog.blog_project.entity.ProfileMessage.SUCCESS_PROFILE_VIEW;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -77,6 +79,29 @@ public class ProfileDto {
         // 실패한 경우를 위한 빌더 메서드
         public static ProfileDto.ModifyProfileResponse failure(String errorMessage) {
             return ProfileDto.ModifyProfileResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class SimpleProfilesResponse {
+        private List<SingleSimpleProfileDto> profiles;
+        private String message;
+
+        public static SimpleProfilesResponse success(List<SingleSimpleProfileDto> profiles) {
+            return SimpleProfilesResponse.builder()
+                    .message(SUCCESS_POSTS_VIEW.getMessage())
+                    .profiles(profiles)
+                    .build();
+        }
+
+        public static SimpleProfilesResponse failure(String errorMessage) {
+            return SimpleProfilesResponse.builder()
                     .message(errorMessage)
                     .build();
         }

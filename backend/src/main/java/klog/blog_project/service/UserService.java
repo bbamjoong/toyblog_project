@@ -5,10 +5,12 @@ import static klog.blog_project.entity.UserMessage.EXIST_ID;
 import static klog.blog_project.entity.UserMessage.EXIST_NICKNAME;
 import static klog.blog_project.entity.UserMessage.NOT_EXIST_USER;
 
+import java.util.List;
 import java.util.Optional;
 import klog.blog_project.entity.User;
 import klog.blog_project.entity.dto.ProfileDto.ModifyProfileRequest;
 import klog.blog_project.entity.dto.SingleProfileDto;
+import klog.blog_project.entity.dto.SingleSimpleProfileDto;
 import klog.blog_project.entity.dto.UserDto;
 import klog.blog_project.exception.ForbiddenUserException;
 import klog.blog_project.exception.UserDuplicateException;
@@ -98,5 +100,9 @@ public class UserService {
             throw new ForbiddenUserException(FORBIDDEN.getMessage());
         }
         user.changeInformation(dto);
+    }
+
+    public List<SingleSimpleProfileDto> findAllSimpleProfiles() {
+        return userRepository.findAllSimpleProfiles();
     }
 }
