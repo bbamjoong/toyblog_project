@@ -1,6 +1,8 @@
 package klog.blog_project.entity.dto;
 
 import static klog.blog_project.entity.PostMessage.SUCCESS_DETAIL_POST_VIEW;
+import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
+
 import static klog.blog_project.entity.UserMessage.SUCCESS_WRITE;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -77,7 +79,7 @@ public class PostDto {
             return DetailPostResponse.builder()
                     .nickname(post.getUser().getNickname())
                     .title(post.getTitle())
-                    .content(post.getTitle())
+                    .content(post.getContent())
                     .likeCount(post.getLikeCount())
                     .viewCount(post.getViewCount())
                     .createdDate(post.getCreatedDate())
@@ -87,6 +89,43 @@ public class PostDto {
 
         public static PostDto.DetailPostResponse failure(String errorMessage) {
             return DetailPostResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ModifyPostRequest {
+        @NotNull(message = "제목은 null일 수 없습니다.")
+        @NotBlank(message = "제목을 입력해 주세요.")
+        private String title;
+
+        @NotNull(message = "내용은 null일 수 없습니다.")
+        @NotBlank(message = "내용을 입력해 주세요.")
+        private String content;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ModifyPostResponse {
+        private Long userId;
+        private String message;
+
+        public static PostDto.ModifyPostResponse success(Long userId) {
+            return PostDto.ModifyPostResponse.builder()
+                    .userId(userId)
+                    .message(SUCCESS_MODIFY.getMessage())
+                    .build();
+        }
+
+        // 실패한 경우를 위한 빌더 메서드
+        public static PostDto.ModifyPostResponse failure(String errorMessage) {
+            return PostDto.ModifyPostResponse.builder()
                     .message(errorMessage)
                     .build();
         }
