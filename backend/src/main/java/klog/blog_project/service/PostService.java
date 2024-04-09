@@ -2,16 +2,18 @@ package klog.blog_project.service;
 
 import static klog.blog_project.entity.PostMessage.FORBIDDEN;
 import static klog.blog_project.entity.PostMessage.NOT_EXIST_POST;
+import static klog.blog_project.entity.UserMessage.NOT_EXIST_USER;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import klog.blog_project.entity.Post;
 import klog.blog_project.entity.User;
 import klog.blog_project.entity.dto.PostDto;
 import klog.blog_project.entity.dto.PostDto.ModifyPostRequest;
-import klog.blog_project.exception.PostNotFoundException;
+import klog.blog_project.entity.dto.SinglePostDto;
 import klog.blog_project.exception.ForbiddenUserException;
+import klog.blog_project.exception.PostNotFoundException;
+import klog.blog_project.exception.UserNotFoundException;
 import klog.blog_project.repository.DetailPostViewRepository;
 import klog.blog_project.repository.PostRepository;
 import klog.blog_project.repository.UserRepository;
@@ -77,5 +79,16 @@ public class PostService {
         if (deletedCount == 0) {
             throw new ForbiddenUserException(FORBIDDEN.getMessage());
         }
+    }
+
+    public List<SinglePostDto> findAllPosts(String nickname) {
+        // 닉네임이 없으면 not found
+        Optional<User> userOptional = userRepository.findByNickname(nickname);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException(NOT_EXIST_USER.getMessage());
+        }
+
+        User user = userOptional.get();
+        return postRepository.findPostsByUser(user);
     }
 }

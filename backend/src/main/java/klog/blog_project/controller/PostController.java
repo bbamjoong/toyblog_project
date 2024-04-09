@@ -6,13 +6,17 @@ import static klog.blog_project.entity.UserMessage.UNAUTHORIZED;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
 import klog.blog_project.entity.Post;
 import klog.blog_project.entity.dto.PostDto;
 import klog.blog_project.entity.dto.PostDto.DeletePostResponse;
 import klog.blog_project.entity.dto.PostDto.ModifyPostResponse;
+import klog.blog_project.entity.dto.PostDto.PostsResponse;
 import klog.blog_project.entity.dto.PostDto.WriteResponse;
-import klog.blog_project.exception.PostNotFoundException;
+import klog.blog_project.entity.dto.SinglePostDto;
 import klog.blog_project.exception.ForbiddenUserException;
+import klog.blog_project.exception.PostNotFoundException;
+import klog.blog_project.exception.UserNotFoundException;
 import klog.blog_project.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,8 +38,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/write")
-    public ResponseEntity<WriteResponse> writePost(@Valid @RequestBody PostDto.WriteRequest dto,
-                                                   HttpServletRequest request) {
+    public ResponseEntity<PostDto.WriteResponse> writePost(@Valid @RequestBody PostDto.WriteRequest dto,
+                                                           HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         // 로그인한 유저가 존재할 경우 글 작성
         if (session != null) {
@@ -77,7 +81,8 @@ public class PostController {
     }
 
     @PatchMapping("/update/{postId}")
-    public ResponseEntity<PostDto.ModifyPostResponse> modifyPost(@Valid @RequestBody PostDto.ModifyPostRequest dto, HttpServletRequest request,
+    public ResponseEntity<PostDto.ModifyPostResponse> modifyPost(@Valid @RequestBody PostDto.ModifyPostRequest dto,
+                                                                 HttpServletRequest request,
                                                                  @PathVariable("postId") Long postId) {
         HttpSession session = request.getSession(false);
         // 로그인한 유저가 존재할 경우 글 수정
@@ -86,11 +91,13 @@ public class PostController {
             postService.modify(dto, userId, postId);
             return ResponseEntity.status(HttpStatus.OK).body(ModifyPostResponse.success(userId));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(PostDto.ModifyPostResponse.failure(UNAUTHORIZED.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(PostDto.ModifyPostResponse.failure(UNAUTHORIZED.getMessage()));
     }
 
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<PostDto.DeletePostResponse> deletePost(HttpServletRequest request, @PathVariable("postId") Long postId) {
+    public ResponseEntity<PostDto.DeletePostResponse> deletePost(HttpServletRequest request,
+                                                                 @PathVariable("postId") Long postId) {
         HttpSession session = request.getSession(false);
         // 로그인한 유저가 존재할 경우 글 삭제
         if (session != null) {
@@ -98,12 +105,25 @@ public class PostController {
             postService.delete(userId, postId);
             return ResponseEntity.status(HttpStatus.OK).body(DeletePostResponse.success(userId, postId));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(PostDto.DeletePostResponse.failure(UNAUTHORIZED.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(PostDto.DeletePostResponse.failure(UNAUTHORIZED.getMessage()));
     }
 
     @ExceptionHandler(ForbiddenUserException.class)
     @ResponseBody
     public ResponseEntity<PostDto.DeletePostResponse> handleForbiddenPostException(ForbiddenUserException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(PostDto.DeletePostResponse.failure(ex.getMessage()));
+    }
+
+    @GetMapping("/{nickname}/posts")
+    public ResponseEntity<PostDto.PostsResponse> viewAllPosts(@PathVariable("nickname") String nickname) {
+        List<SinglePostDto> posts = postService.findAllPosts(nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(PostsResponse.success(posts));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseBody
+    public ResponseEntity<PostDto.PostsResponse> handleForbiddenPostException(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PostDto.PostsResponse.failure(ex.getMessage()));
     }
 }

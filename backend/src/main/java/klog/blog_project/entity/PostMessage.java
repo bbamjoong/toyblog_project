@@ -13,7 +13,9 @@ public enum PostMessage {
     UNAUTHORIZED("권한이 없는 사용자 입니다."),
     FORBIDDEN("권한이 없는 사용자 입니다."),
 
-    SUCCESS_DELETE("글 삭제가 성공적으로 완료되었습니다.");
+    SUCCESS_DELETE("글 삭제가 성공적으로 완료되었습니다."),
+
+    SUCCESS_POSTS_VIEW("전체 글 조회가 성공적으로 완료되었습니다.");
 
     private final String message;
 }
