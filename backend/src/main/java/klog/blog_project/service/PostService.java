@@ -1,7 +1,7 @@
 package klog.blog_project.service;
 
+import static klog.blog_project.entity.PostMessage.FORBIDDEN;
 import static klog.blog_project.entity.PostMessage.NOT_EXIST_POST;
-import static klog.blog_project.entity.PostMessage.UNAUTHORIZED;
 
 import java.util.Optional;
 import klog.blog_project.entity.Post;
@@ -9,7 +9,7 @@ import klog.blog_project.entity.User;
 import klog.blog_project.entity.dto.PostDto;
 import klog.blog_project.entity.dto.PostDto.ModifyPostRequest;
 import klog.blog_project.exception.PostNotFoundException;
-import klog.blog_project.exception.UnauthorizedUserException;
+import klog.blog_project.exception.ForbiddenUserException;
 import klog.blog_project.repository.DetailPostViewRepository;
 import klog.blog_project.repository.PostRepository;
 import klog.blog_project.repository.UserRepository;
@@ -60,12 +60,16 @@ public class PostService {
         }
 
         Post post = postOptional.get();
-        // post의 userId와 파라미터의 userId가 다르면 Unauthorized
-        if (!post.getPostId().equals(userId)) {
-            throw new UnauthorizedUserException(UNAUTHORIZED.getMessage());
-        }
-
         // 글 수정
         post.changeInformation(dto.getTitle(), dto.getContent());
+    }
+
+    public void delete(Long userId, Long postId) {
+        // querydsl 대신 JpaRepository 이용
+        User user = userRepository.findByUserId(userId);
+        Long deletedCount = postRepository.deletePostByPostIdAndUser(postId, user);
+        if (deletedCount == 0) {
+            throw new ForbiddenUserException(FORBIDDEN.getMessage());
+        }
     }
 }

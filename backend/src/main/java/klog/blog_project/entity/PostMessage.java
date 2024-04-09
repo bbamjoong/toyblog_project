@@ -10,7 +10,10 @@ public enum PostMessage {
     NOT_EXIST_POST("존재하지 않는 포스트 입니다."),
 
     SUCCESS_MODIFY("글 수정이 성공적으로 완료되었습니다."),
-    UNAUTHORIZED("권한이 없는 사용자 입니다.");
+    UNAUTHORIZED("권한이 없는 사용자 입니다."),
+    FORBIDDEN("권한이 없는 사용자 입니다."),
+
+    SUCCESS_DELETE("글 삭제가 성공적으로 완료되었습니다.");
 
     private final String message;
 }
