@@ -1,8 +1,11 @@
 package klog.blog_project.entity.dto;
 
+import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
 import static klog.blog_project.entity.ProfileMessage.SUCCESS_PROFILE_VIEW;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +36,47 @@ public class ProfileDto {
         // 실패한 경우를 위한 빌더 메서드
         public static ProfileDto.ProfileResponse failure(String errorMessage) {
             return ProfileDto.ProfileResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ModifyProfileRequest {
+        @NotNull(message = "URL은 null일 수 없습니다.")
+        @NotBlank(message = "URL을 입력해 주세요.")
+        private String profileImage;
+
+        @NotNull(message = "소개 글 제목은 null일 수 없습니다.")
+        @NotBlank(message = "제목을 입력해 주세요.")
+        private String introductionTitle;
+
+        @NotNull(message = "소개 글 내용은 null일 수 없습니다.")
+        @NotBlank(message = "내용을 입력해 주세요.")
+        private String introductionContent;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ModifyProfileResponse {
+        private Long userId;
+        private String message;
+
+        public static ProfileDto.ModifyProfileResponse success(Long userId) {
+            return ProfileDto.ModifyProfileResponse.builder()
+                    .userId(userId)
+                    .message(SUCCESS_MODIFY.getMessage())
+                    .build();
+        }
+
+        // 실패한 경우를 위한 빌더 메서드
+        public static ProfileDto.ModifyProfileResponse failure(String errorMessage) {
+            return ProfileDto.ModifyProfileResponse.builder()
                     .message(errorMessage)
                     .build();
         }

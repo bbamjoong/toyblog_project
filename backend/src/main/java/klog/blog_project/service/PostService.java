@@ -68,7 +68,7 @@ public class PostService {
 
         Post post = postOptional.get();
         // 글 수정
-        post.changeInformation(dto.getTitle(), dto.getContent());
+        post.changeInformation(dto);
     }
 
     public void delete(Long userId, Long postId) {

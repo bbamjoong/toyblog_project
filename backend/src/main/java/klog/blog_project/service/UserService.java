@@ -1,13 +1,16 @@
 package klog.blog_project.service;
 
+import static klog.blog_project.entity.PostMessage.FORBIDDEN;
 import static klog.blog_project.entity.UserMessage.EXIST_ID;
 import static klog.blog_project.entity.UserMessage.EXIST_NICKNAME;
 import static klog.blog_project.entity.UserMessage.NOT_EXIST_USER;
 
 import java.util.Optional;
 import klog.blog_project.entity.User;
+import klog.blog_project.entity.dto.ProfileDto.ModifyProfileRequest;
 import klog.blog_project.entity.dto.SingleProfileDto;
 import klog.blog_project.entity.dto.UserDto;
+import klog.blog_project.exception.ForbiddenUserException;
 import klog.blog_project.exception.UserDuplicateException;
 import klog.blog_project.exception.UserNotFoundException;
 import klog.blog_project.repository.LoginRepository;
@@ -83,5 +86,17 @@ public class UserService {
             throw new UserNotFoundException(NOT_EXIST_USER.getMessage());
         }
         return profileDtoOptional.get();
+    }
+
+    public void modifyProfile(ModifyProfileRequest dto, Long userId, String nickname) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+        // 세션의 userId는 반드시 존재하므로 get을 바로 이용
+        User user = userOptional.get();
+
+        // 로그인한 유저와, 프로필 수정할 URI의 닉네임 정보가 일치하지 않으면 Forbidden
+        if (!user.getNickname().equals(nickname)) {
+            throw new ForbiddenUserException(FORBIDDEN.getMessage());
+        }
+        user.changeInformation(dto);
     }
 }

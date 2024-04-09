@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import klog.blog_project.entity.dto.ProfileDto.ModifyProfileRequest;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,4 +62,10 @@ public class User extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
+
+    public void changeInformation(ModifyProfileRequest dto) {
+        this.profileImage = dto.getProfileImage();
+        this.introductionTitle = dto.getIntroductionTitle();
+        this.introductionContent = dto.getIntroductionContent();
+    }
 }
