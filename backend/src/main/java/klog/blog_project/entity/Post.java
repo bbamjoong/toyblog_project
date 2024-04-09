@@ -26,7 +26,7 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id")
     private Long postId;
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
