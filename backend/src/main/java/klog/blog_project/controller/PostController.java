@@ -115,7 +115,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(PostDto.DeletePostResponse.failure(ex.getMessage()));
     }
 
-    @GetMapping("/{nickname}/posts")
+    @GetMapping("/{nickname}/postsInfo")
     public ResponseEntity<PostDto.PostsResponse> viewAllPosts(@PathVariable("nickname") String nickname) {
         List<SinglePostDto> posts = postService.findAllPosts(nickname);
         return ResponseEntity.status(HttpStatus.OK).body(PostsResponse.success(posts));

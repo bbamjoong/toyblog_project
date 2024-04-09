@@ -6,6 +6,7 @@ import static klog.blog_project.entity.UserMessage.NOT_EXIST_USER;
 
 import java.util.Optional;
 import klog.blog_project.entity.User;
+import klog.blog_project.entity.dto.SingleProfileDto;
 import klog.blog_project.entity.dto.UserDto;
 import klog.blog_project.exception.UserDuplicateException;
 import klog.blog_project.exception.UserNotFoundException;
@@ -73,5 +74,14 @@ public class UserService {
             throw new UserNotFoundException(NOT_EXIST_USER.getMessage());
         }
         return userOptional.get().getUserId();
+    }
+
+    public SingleProfileDto findUserProfileDto(String nickname) {
+        Optional<SingleProfileDto> profileDtoOptional = userRepository.findUserDtoByNickname(nickname);
+
+        if (profileDtoOptional.isEmpty()) {
+            throw new UserNotFoundException(NOT_EXIST_USER.getMessage());
+        }
+        return profileDtoOptional.get();
     }
 }
