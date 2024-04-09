@@ -1,7 +1,7 @@
 package klog.blog_project.exception;
 
-public class UnauthorizedUserException extends RuntimeException {
-    public UnauthorizedUserException(String message) {
+public class ForbiddenUserException extends RuntimeException {
+    public ForbiddenUserException(String message) {
         super(message);
     }
 

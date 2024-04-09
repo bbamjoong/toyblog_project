@@ -8,15 +8,17 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import klog.blog_project.entity.Post;
 import klog.blog_project.entity.dto.PostDto;
+import klog.blog_project.entity.dto.PostDto.DeletePostResponse;
 import klog.blog_project.entity.dto.PostDto.ModifyPostResponse;
 import klog.blog_project.entity.dto.PostDto.WriteResponse;
 import klog.blog_project.exception.PostNotFoundException;
-import klog.blog_project.exception.UnauthorizedUserException;
+import klog.blog_project.exception.ForbiddenUserException;
 import klog.blog_project.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -87,9 +89,21 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(PostDto.ModifyPostResponse.failure(UNAUTHORIZED.getMessage()));
     }
 
-    @ExceptionHandler(UnauthorizedUserException.class)
+    @DeleteMapping("/delete/{postId}")
+    public ResponseEntity<PostDto.DeletePostResponse> deletePost(HttpServletRequest request, @PathVariable("postId") Long postId) {
+        HttpSession session = request.getSession(false);
+        // 로그인한 유저가 존재할 경우 글 삭제
+        if (session != null) {
+            Long userId = (Long) session.getAttribute("userId");
+            postService.delete(userId, postId);
+            return ResponseEntity.status(HttpStatus.OK).body(DeletePostResponse.success(userId, postId));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(PostDto.DeletePostResponse.failure(UNAUTHORIZED.getMessage()));
+    }
+
+    @ExceptionHandler(ForbiddenUserException.class)
     @ResponseBody
-    public ResponseEntity<PostDto.ModifyPostResponse> handlePostNotFoundException(UnauthorizedUserException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PostDto.ModifyPostResponse.failure(ex.getMessage()));
+    public ResponseEntity<PostDto.DeletePostResponse> handleForbiddenPostException(ForbiddenUserException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(PostDto.DeletePostResponse.failure(ex.getMessage()));
     }
 }

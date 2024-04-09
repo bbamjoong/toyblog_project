@@ -1,5 +1,6 @@
 package klog.blog_project.entity.dto;
 
+import static klog.blog_project.entity.PostMessage.SUCCESS_DELETE;
 import static klog.blog_project.entity.PostMessage.SUCCESS_DETAIL_POST_VIEW;
 import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
 
@@ -130,4 +131,30 @@ public class PostDto {
                     .build();
         }
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class DeletePostResponse {
+        private Long userId;
+        private Long postId;
+        private String message;
+
+        public static PostDto.DeletePostResponse success(Long userId, Long postId) {
+            return DeletePostResponse.builder()
+                    .userId(userId)
+                    .postId(postId)
+                    .message(SUCCESS_DELETE.getMessage())
+                    .build();
+        }
+
+        public static PostDto.DeletePostResponse failure(String errorMessage) {
+            return PostDto.DeletePostResponse.builder()
+                    .message(errorMessage)
+                    .build();
+        }
+    }
+
 }
