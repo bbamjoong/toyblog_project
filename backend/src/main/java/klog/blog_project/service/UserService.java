@@ -39,16 +39,16 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public void validateDuplicateUserId(UserDto.SignupRequest dto) {
-        User existingUserById = userRepository.findById(dto.getId());
-        if (existingUserById != null) {
+        Optional<User> existingUserById = userRepository.findById(dto.getId());
+        if (existingUserById.isPresent()) {
             throw new UserDuplicateException(EXIST_ID.getMessage());
         }
     }
 
     @Transactional(readOnly = true)
     public void validateDuplicateNickname(UserDto.SignupRequest dto) {
-        User existingUserByNickname = userRepository.findByNickname(dto.getNickname());
-        if (existingUserByNickname != null) {
+        Optional<User> existingUserByNickname = userRepository.findByNickname(dto.getNickname());
+        if (existingUserByNickname.isPresent()) {
             throw new UserDuplicateException(EXIST_NICKNAME.getMessage());
         }
     }
