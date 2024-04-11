@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
     private final UserService userService;
 
-    @GetMapping("/{nickname}/profileInfo")
+    @GetMapping("/profile/{nickname}/profileInfo")
     public ResponseEntity<ProfileResponse> viewProfile(@PathVariable("nickname") String nickname) {
         SingleProfileDto dto = userService.findUserProfileDto(nickname);
         return ResponseEntity.status(HttpStatus.OK).body(ProfileResponse.success(dto));
@@ -52,7 +52,7 @@ public class ProfileController {
                 .body(INTERNAL_SERVER_ERROR.getMessage());
     }
 
-    @PatchMapping("/{nickname}/updateProfile")
+    @PatchMapping("/profile/{nickname}/updateProfile")
     public ResponseEntity<ProfileDto.ModifyProfileResponse> modifyProfile(
             @Valid @RequestBody ProfileDto.ModifyProfileRequest dto,
             HttpServletRequest request, @PathVariable("nickname") String nickname) {
@@ -82,7 +82,7 @@ public class ProfileController {
                 .body(ProfileDto.ModifyProfileResponse.failure(ex.getMessage()));
     }
 
-    @GetMapping("/usersInfo")
+    @GetMapping("/profile/usersInfo")
     public ResponseEntity<SimpleProfilesResponse> viewAllSimpleProfiles() {
         List<SingleSimpleProfileDto> profiles = userService.findAllSimpleProfiles();
         return ResponseEntity.status(HttpStatus.OK).body(SimpleProfilesResponse.success(profiles));
