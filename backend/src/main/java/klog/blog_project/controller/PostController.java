@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
 
-    @PostMapping("/write")
+    @PostMapping("/post/write")
     public ResponseEntity<PostDto.WriteResponse> writePost(@Valid @RequestBody PostDto.WriteRequest dto,
                                                            HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -67,7 +67,7 @@ public class PostController {
                 .body(INTERNAL_SERVER_ERROR.getMessage());
     }
 
-    @GetMapping("/{nickname}/{postId}")
+    @GetMapping("/post/{nickname}/{postId}")
     public ResponseEntity<PostDto.DetailPostResponse> viewDetailPost(@PathVariable("nickname") String nickname,
                                                                      @PathVariable("postId") Long postId) {
         Post post = postService.findPost(nickname, postId);
@@ -80,7 +80,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PostDto.DetailPostResponse.failure(ex.getMessage()));
     }
 
-    @PatchMapping("/update/{postId}")
+    @PatchMapping("/post/update/{postId}")
     public ResponseEntity<PostDto.ModifyPostResponse> modifyPost(@Valid @RequestBody PostDto.ModifyPostRequest dto,
                                                                  HttpServletRequest request,
                                                                  @PathVariable("postId") Long postId) {
@@ -95,7 +95,7 @@ public class PostController {
                 .body(PostDto.ModifyPostResponse.failure(UNAUTHORIZED.getMessage()));
     }
 
-    @DeleteMapping("/delete/{postId}")
+    @DeleteMapping("/post/delete/{postId}")
     public ResponseEntity<PostDto.DeletePostResponse> deletePost(HttpServletRequest request,
                                                                  @PathVariable("postId") Long postId) {
         HttpSession session = request.getSession(false);
@@ -115,7 +115,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(PostDto.DeletePostResponse.failure(ex.getMessage()));
     }
 
-    @GetMapping("/{nickname}/postsInfo")
+    @GetMapping("/post/{nickname}/postsInfo")
     public ResponseEntity<PostDto.PostsResponse> viewAllPosts(@PathVariable("nickname") String nickname) {
         List<SinglePostDto> posts = postService.findAllPosts(nickname);
         return ResponseEntity.status(HttpStatus.OK).body(PostsResponse.success(posts));

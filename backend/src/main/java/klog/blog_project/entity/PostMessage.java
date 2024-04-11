@@ -9,7 +9,7 @@ public enum PostMessage {
     SUCCESS_DETAIL_POST_VIEW("상세 글이 성공적으로 조회되었습니다."),
     NOT_EXIST_POST("존재하지 않는 포스트 입니다."),
 
-    SUCCESS_MODIFY("글 수정이 성공적으로 완료되었습니다."),
+    SUCCESS_POST_MODIFY("글 수정이 성공적으로 완료되었습니다."),
     UNAUTHORIZED("권한이 없는 사용자 입니다."),
     FORBIDDEN("권한이 없는 사용자 입니다."),
 

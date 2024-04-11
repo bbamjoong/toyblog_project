@@ -1,7 +1,7 @@
 package klog.blog_project.entity.dto;
 
-import static klog.blog_project.entity.PostMessage.SUCCESS_MODIFY;
-import static klog.blog_project.entity.PostMessage.SUCCESS_POSTS_VIEW;
+import static klog.blog_project.entity.ProfileMessage.SUCCESS_PROFILES_VIEW;
+import static klog.blog_project.entity.ProfileMessage.SUCCESS_PROFILE_MODIFY;
 import static klog.blog_project.entity.ProfileMessage.SUCCESS_PROFILE_VIEW;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -72,7 +72,7 @@ public class ProfileDto {
         public static ProfileDto.ModifyProfileResponse success(Long userId) {
             return ProfileDto.ModifyProfileResponse.builder()
                     .userId(userId)
-                    .message(SUCCESS_MODIFY.getMessage())
+                    .message(SUCCESS_PROFILE_MODIFY.getMessage())
                     .build();
         }
 
@@ -95,7 +95,7 @@ public class ProfileDto {
 
         public static SimpleProfilesResponse success(List<SingleSimpleProfileDto> profiles) {
             return SimpleProfilesResponse.builder()
-                    .message(SUCCESS_POSTS_VIEW.getMessage())
+                    .message(SUCCESS_PROFILES_VIEW.getMessage())
                     .profiles(profiles)
                     .build();
         }
